@@ -139,9 +139,9 @@ ls -lh split_library_output/
 
 ```
 ## total 420K
-## -rw-r--r-- 1 high netid_users  317 Aug 31 18:44 histograms.txt
-## -rw-r--r-- 1 high netid_users 409K Aug 31 18:44 seqs.fna
-## -rw-r--r-- 1 high netid_users 1.2K Aug 31 18:44 split_library_log.txt
+## -rw-r--r-- 1 high netid_users  317 Sep  1 08:31 histograms.txt
+## -rw-r--r-- 1 high netid_users 409K Sep  1 08:31 seqs.fna
+## -rw-r--r-- 1 high netid_users 1.2K Sep  1 08:31 split_library_log.txt
 ```
 
 View the logfile.
@@ -347,7 +347,9 @@ Make html reports containing plots.
 
 
 ```bash
-plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt -o taxonomy_plot_L3/
+if [ ! -d taxonomy_plot_L3 ]; then \
+    plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt -o taxonomy_plot_L3/
+fi
 ```
 
 

@@ -134,14 +134,18 @@ head otu_table_tabseparated.txt
 summarize_taxa.py -i otu_table.biom -o taxonomy_summaries/
 
 # Make html reports containing plots.
-plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt \
-    -o taxonomy_plot_L3/
+if [ ! -d taxonomy_plot_L3 ]; then \
+    plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt \
+        -o taxonomy_plot_L3/
+fi
 
 # ----------------------------------
 # Make a Multiple Sequence Alignment
 # ----------------------------------
 
-align_seqs.py -i rep_set.fna -o alignment/
+if [ ! -d alignment ]; then \
+    align_seqs.py -i rep_set.fna -o alignment/
+fi
 
 # Filter the alignment to aid the building of phylogenetic tree.
 filter_alignment.py -i alignment/rep_set_aligned.fasta -o alignment/
@@ -164,8 +168,10 @@ multiple_rarefactions.py -i otu_table.biom -m 20 -x 100 -s 20 -n 10 \
 # Calculate Alpha Diversity
 # -------------------------
 
-alpha_diversity.py -i rare_20-100/ -o alpha_rare/ -t rep_set_tree.tre \
-    -m observed_species,chao1,PD_whole_tree
+if [ ! -d alpha_rare ]; then \
+    alpha_diversity.py -i rare_20-100/ -o alpha_rare/ -t rep_set_tree.tre \
+        -m observed_species,chao1,PD_whole_tree
+fi
 
 # ----------------------------------
 # Summarize the Alpha Diversity Data

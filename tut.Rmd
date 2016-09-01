@@ -205,7 +205,9 @@ summarize_taxa.py -i otu_table.biom -o taxonomy_summaries/
 Make html reports containing plots.
 
 ```{r, engine='bash', eval=FALSE}
-plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt -o taxonomy_plot_L3/
+if [ ! -d taxonomy_plot_L3 ]; then \
+    plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt -o taxonomy_plot_L3/
+fi
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
