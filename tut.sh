@@ -6,12 +6,20 @@
 #
 # This bash script runs the commands listed in an online Qiime tutorial.
 #
+# Tested on Ubuntu 14 (Biolinux 8). Has not been tested on any other platform.
+# 
 # Based on:
 # 
 # * Werner Lab Qiime Overview Tutorial
 #     http://www.wernerlab.org/teaching/qiime/overview
 # * Qiime.org Qiime Tutorial
 #     http://qiime.org/tutorials/tutorial.html
+
+# ----------------------
+# Test Qiime Environment
+# ----------------------
+
+print_qiime_config.py -tf
 
 # ------------
 # Get the data
@@ -116,11 +124,11 @@ make_otu_table.py -i uclust_picked_otus/inflated_denoised_seqs_otus.txt \
 biom convert -i otu_table.biom -o otu_table_tabseparated.txt \
     --to-tsv --header-key taxonomy --output-metadata-id "ConsensusLineage"
 
-# View the frist 10 lines of `otu_table_tabseparated.txt`.
+# View the first 10 lines of `otu_table_tabseparated.txt`.
 head otu_table_tabseparated.txt
 
 # -------------------
-#  Summarize Taxonomy
+# Summarize Taxonomy
 # -------------------
 
 summarize_taxa.py -i otu_table.biom -o taxonomy_summaries/
@@ -135,7 +143,7 @@ plot_taxa_summary.py -i taxonomy_summaries/otu_table_L3.txt \
 
 align_seqs.py -i rep_set.fna -o alignment/
 
-# Filter the alignment to aid the building of phylogenetic tree
+# Filter the alignment to aid the building of phylogenetic tree.
 filter_alignment.py -i alignment/rep_set_aligned.fasta -o alignment/
 
 # -------------------------
@@ -169,9 +177,11 @@ collate_alpha.py -i alpha_rare/ -o alpha_collated/
 # Jackknifed beta diversity analysis
 # ----------------------------------
 
-jackknifed_beta_diversity.py -i otu_table.biom \
-    -o jackknifed_beta_diversity/ -e 90 \
-    -m Fasting_Map.txt -t rep_set_tree.tre
+if [ ! -d jackknifed_beta_diversity ]; then \
+    jackknifed_beta_diversity.py -i otu_table.biom \
+        -o jackknifed_beta_diversity/ -e 90 \
+        -m Fasting_Map.txt -t rep_set_tree.tre
+fi
 
 # -------------------
 # Distance Statistics
@@ -181,6 +191,15 @@ dissimilarity_mtx_stats.py \
     -i jackknifed_beta_diversity/unweighted_unifrac/rare_dm/ \
     -o unweighted_unifrac_stats/
 
-# Make distance boxplots
+# ----------------------
+# Make Distance Boxplots
+# ----------------------
+
+# Note: These commands need to run with access to a graphical display.
+
 make_distance_boxplots.py -m Fasting_Map.txt -o distance_boxplots \
     -d unweighted_unifrac_stats/means.txt -f Treatment --save_raw_data
+
+# Convert PDF to PNG.
+convert distance_boxplots/Treatment_Distances.pdf \
+    distance_boxplots/Treatment_Distances.png
