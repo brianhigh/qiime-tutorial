@@ -139,9 +139,9 @@ ls -lh split_library_output/
 
 ```
 ## total 420K
-## -rw-r--r-- 1 high netid_users  317 Sep  1 08:31 histograms.txt
-## -rw-r--r-- 1 high netid_users 409K Sep  1 08:31 seqs.fna
-## -rw-r--r-- 1 high netid_users 1.2K Sep  1 08:31 split_library_log.txt
+## -rw-r--r-- 1 high netid_users  317 Sep  1 14:38 histograms.txt
+## -rw-r--r-- 1 high netid_users 409K Sep  1 14:38 seqs.fna
+## -rw-r--r-- 1 high netid_users 1.2K Sep  1 14:38 split_library_log.txt
 ```
 
 View the logfile.
@@ -353,8 +353,40 @@ fi
 ```
 
 
+```r
+# Note: This is the only part of the script that uses R commands for data processing.
+
+require(XML)
+
+# Extract the names of the PDF files from the bar plot HTML file.
+doc.html <- htmlParse('taxonomy_plot_L3/bar_charts.html')
+doc.links <- xpathSApply(doc.html, "//a/@href")
+pdf.url <- as.character(doc.links[grep('pdf', doc.links)])
+
+# Copy the bar plot PDF to "images" with a consistent name.
+pdf.path <- file.path('taxonomy_plot_L3', pdf.url[1])
+if (file.exists(pdf.path)) {
+    file.copy(pdf.path, file.path('..', 'images', 'taxonomy_plot_L3_bar.pdf'))
+}
+
+# Copy the bar plot legend PDF to "images" with a consistent name.
+pdf.path <- file.path('taxonomy_plot_L3', pdf.url[2])
+if (file.exists(pdf.path)) {
+    file.copy(pdf.path, file.path('..', 'images', 'taxonomy_plot_L3_bar_legend.pdf'))
+}
+```
+
+Convert PDF to PNG.
+
+
+```bash
+convert images/taxonomy_plot_L3_bar.pdf images/taxonomy_plot_L3_bar.png
+convert images/taxonomy_plot_L3_bar_legend.pdf images/taxonomy_plot_L3_bar_legend.png
+```
 
 ![](images/taxonomy_plot_L3_bar.png)
+
+![](images/taxonomy_plot_L3_bar_legend.png)
 
 ## Make a Multiple Sequence Alignment
 

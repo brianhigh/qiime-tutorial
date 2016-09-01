@@ -210,23 +210,39 @@ if [ ! -d taxonomy_plot_L3 ]; then \
 fi
 ```
 
-```{r, echo=FALSE, eval=FALSE}
-# Extract the name of the PNG file from the HTML file and copy the PNG to "images".
+```{r, eval=FALSE}
+# Note: This is the only part of the script that uses R commands for data processing.
 
 require(XML)
 
-png.file <- getHTMLExternalFiles(
-    'taxonomy_plot_L3/bar_charts.html', 
-    xpQuery = c("//img/@src"))
+# Extract the names of the PDF files from the bar plot HTML file.
+doc.html <- htmlParse('taxonomy_plot_L3/bar_charts.html')
+doc.links <- xpathSApply(doc.html, "//a/@href")
+pdf.url <- as.character(doc.links[grep('pdf', doc.links)])
 
-png.path <- file.path('taxonomy_plot_L3', png.file)
+# Copy the bar plot PDF to "images" with a consistent name.
+pdf.path <- file.path('taxonomy_plot_L3', pdf.url[1])
+if (file.exists(pdf.path)) {
+    file.copy(pdf.path, file.path('..', 'images', 'taxonomy_plot_L3_bar.pdf'))
+}
 
-if (file.exists(png.path)) {
-    file.copy(png.path, file.path('..', 'images', 'taxonomy_plot_L3_bar.png'))
+# Copy the bar plot legend PDF to "images" with a consistent name.
+pdf.path <- file.path('taxonomy_plot_L3', pdf.url[2])
+if (file.exists(pdf.path)) {
+    file.copy(pdf.path, file.path('..', 'images', 'taxonomy_plot_L3_bar_legend.pdf'))
 }
 ```
 
+Convert PDF to PNG.
+
+```{r, engine='bash', eval=FALSE}
+convert images/taxonomy_plot_L3_bar.pdf images/taxonomy_plot_L3_bar.png
+convert images/taxonomy_plot_L3_bar_legend.pdf images/taxonomy_plot_L3_bar_legend.png
+```
+
 ![](images/taxonomy_plot_L3_bar.png)
+
+![](images/taxonomy_plot_L3_bar_legend.png)
 
 ## Make a Multiple Sequence Alignment
 
